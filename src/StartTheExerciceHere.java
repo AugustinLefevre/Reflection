@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +14,17 @@ public class StartTheExerciceHere {
     private static List<String> allClassNames = new ArrayList<>();
 
     private static final String CLASS_EXTENTION = ".class";
+
+    /**
+     *Here we have to a main method to run our own class
+     */
     public static void main(String ... args) throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         executeMainMethod();
     }
 
+    /**
+     *This method search all classes with a main method and run the methods fund
+     */
     private static void executeMainMethod() throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Enumeration<URL> resources = classLoader.getResources("");
@@ -36,10 +42,13 @@ public class StartTheExerciceHere {
             methodMain.setAccessible(true);
             methodMain.invoke(null, (Object) null);
         }
-
-
     }
 
+    /**
+     * This method looks for all classes with a given method name
+     * @param methodName the given method name to search
+     * @return a list of class name
+     */
     private static List<String> findClassWithMethodName(String methodName) {
         List<String> results = new ArrayList<>();
         for (String className : allClassNames){
@@ -57,7 +66,12 @@ public class StartTheExerciceHere {
         return results;
     }
 
-    private static void findAllClassNames(File file, String projectName) {
+    /**
+     * This method return all classes names in the project
+     * @param file the file used to do a recursive iteration. Check if it's a directory or if it's a class file.
+     * @param projectName The project name used to guess the class package name
+     */
+    private static void findAllClassNames(File file, String projectName) throws ClassNotFoundException {
         if(file.isDirectory()){
             List<File> childs = Arrays.asList(file.listFiles());
             for (File child : childs){
@@ -65,7 +79,6 @@ public class StartTheExerciceHere {
             }
         }else {
             if(file.getName().contains(CLASS_EXTENTION)){
-                String test = FileSystems.getDefault().getSeparator();
                 StringBuilder splitPattern = new StringBuilder(projectName);
                 splitPattern.append('\\');
                 splitPattern.append(FileSystems.getDefault().getSeparator());
